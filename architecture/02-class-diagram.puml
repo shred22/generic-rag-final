@@ -1,0 +1,79 @@
+@startuml Class Diagram
+class Page {
+  +content: str
+  +page_no: int
+}
+
+interface ContentBlock {
+  +page_no: int
+}
+
+class ProseBlock {
+  +text: str
+}
+class TableBlock {
+  +headers: List[str]
+  +rows: List[List[str]]
+  +caption: Optional[str]
+}
+
+ContentBlock <|.. ProseBlock
+ContentBlock <|.. TableBlock
+
+class JsonDocumentLoader {
+  +load(path: str): List[Page]
+}
+
+interface ContentSegmenterInterface {
+  +segment(page: Page): List[ContentBlock]
+}
+class MarkdownContentSegmenter {
+  +segment(page: Page): List[ContentBlock]
+}
+ContentSegmenterInterface <|.. MarkdownContentSegmenter
+
+interface TableContextEnricherInterface {
+  +enrich(table: TableBlock): List[str]
+}
+class RowWiseTableContextEnricher {
+  +enrich(table: TableBlock): List[str]
+}
+TableContextEnricherInterface <|.. RowWiseTableContextEnricher
+
+class ChunkMetadata {
+  +page_no: int
+  +block_type: str
+  +chunk_index: int
+}
+
+class Chunk {
+  +text: str
+  +metadata: ChunkMetadata
+}
+
+interface ChunkingStrategy {
+  +chunk(block: ContentBlock): List[Chunk]
+}
+class ProseChunkingStrategy {
+  +chunk(block: ProseBlock): List[Chunk]
+}
+class TableChunkingStrategy {
+  -enricher: TableContextEnricherInterface
+  +chunk(block: TableBlock): List[Chunk]
+}
+ChunkingStrategy <|.. ProseChunkingStrategy
+ChunkingStrategy <|.. TableChunkingStrategy
+TableChunkingStrategy --> TableContextEnricherInterface
+
+class DocumentProcessingPipeline {
+  -loader: JsonDocumentLoader
+  -segmenter: ContentSegmenterInterface
+  -prose_strategy: ChunkingStrategy
+  -table_strategy: ChunkingStrategy
+  +process(path: str): List[Chunk]
+}
+DocumentProcessingPipeline --> JsonDocumentLoader
+DocumentProcessingPipeline --> ContentSegmenterInterface
+DocumentProcessingPipeline --> ChunkingStrategy
+Chunk --> ChunkMetadata
+@enduml

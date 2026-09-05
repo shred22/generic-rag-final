@@ -1,0 +1,29 @@
+@startuml Component Diagram
+package "Input" {
+  [JSON File\n(content, pageNo)]
+}
+
+package "Processing Pipeline" {
+  [JsonDocumentLoader]
+  [ContentSegmenter]
+  [TableContextEnricher]
+  [ProseChunkingStrategy]
+  [TableChunkingStrategy]
+  [DocumentProcessingPipeline]
+}
+
+package "Output" {
+  [List of Chunks\n(ready for embedding)]
+}
+
+[JSON File\n(content, pageNo)] --> [JsonDocumentLoader]
+[JsonDocumentLoader] --> [DocumentProcessingPipeline] : List[Page]
+[DocumentProcessingPipeline] --> [ContentSegmenter] : Page
+[ContentSegmenter] --> [DocumentProcessingPipeline] : List[ContentBlock]
+[DocumentProcessingPipeline] --> [TableContextEnricher] : TableBlock
+[TableContextEnricher] --> [TableChunkingStrategy] : Enriched rows
+[DocumentProcessingPipeline] --> [ProseChunkingStrategy] : ProseBlock
+[TableChunkingStrategy] --> [DocumentProcessingPipeline] : List[Chunk]
+[ProseChunkingStrategy] --> [DocumentProcessingPipeline] : List[Chunk]
+[DocumentProcessingPipeline] --> [List of Chunks\n(ready for embedding)]
+@enduml

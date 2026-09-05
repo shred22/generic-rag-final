@@ -1,0 +1,26 @@
+@startuml Processing Flow Diagram
+start
+:PDF file;
+:pymupdf4llm extracts content;
+:JSON file (content, pageNo per page);
+:JsonDocumentLoader parses JSON -> List[Page];
+
+partition "Per Page" {
+  :ContentSegmenter splits content
+  into ProseBlock / TableBlock list;
+  if (Block is TableBlock?) then (yes)
+    :TableContextEnricher converts rows
+    into "Column: Value" contextualized text;
+    :TableChunkingStrategy chunks rows,
+    repeating header context per chunk;
+  else (no)
+    :ProseChunkingStrategy splits text
+    via RecursiveCharacterTextSplitter;
+  endif
+  :Chunks tagged with metadata
+  (page_no, block_type, chunk_index);
+}
+
+:Flat List[Chunk] ready for embedding;
+stop
+@enduml

@@ -1,0 +1,23 @@
+[project]
+name = "rag-self-practise"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "black>=26.5.1",
+    "isort>=9.0.1",
+    "langchain>=1.4.0",
+    "langchain-chroma>=1.1.0",
+    "langchain-openai>=1.6.0",
+    "langchain-text-splitters>=1.1.2",
+    "pymupdf4llm>=1.28.2",
+    "python-dotenv>=1.2.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_self_practise"]

@@ -1,0 +1,4 @@
+from rag_self_practise.enrichers.row_wise_table_context_enricher import RowWiseTableContextEnricher
+from rag_self_practise.enrichers.table_context_enricher import TableContextEnricherInterface
+
+__all__ = ["TableContextEnricherInterface", "RowWiseTableContextEnricher"]
