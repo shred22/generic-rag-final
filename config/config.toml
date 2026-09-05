@@ -1,0 +1,6 @@
+[ingestion]
+# collection_name = "emv_book"
+# json_path = "/home/shreyas/Programming/Repositories/Python/rag-self-practise/docs/emv_book.json"
+
+collection_name = "MicroservicePatterns_book"
+json_path = "/home/shreyas/Programming/Repositories/Python/rag-self-practise/docs/MicroservicePatterns_book.json"

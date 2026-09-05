@@ -1,9 +1,12 @@
+import logging
 from dataclasses import replace
 
 from rag_self_practise.chunkers import ChunkingStrategy
 from rag_self_practise.domain import Chunk, ContentBlock, Page
 from rag_self_practise.loaders import JsonDocumentLoader
 from rag_self_practise.segmenters import ContentSegmenterInterface
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentProcessingPipeline:
@@ -25,16 +28,20 @@ class DocumentProcessingPipeline:
         self._strategies_by_block_type = strategies_by_block_type
 
     def process(self, json_path: str) -> list[Chunk]:
+        logger.info("Loading pages from %s", json_path)
         pages = self._loader.load(json_path)
+        logger.info("Loaded %d pages", len(pages))
 
         all_chunks: list[Chunk] = []
         for page in pages:
             all_chunks.extend(self._process_page(page))
 
+        logger.info("Produced %d chunks from %d pages", len(all_chunks), len(pages))
         return all_chunks
 
     def _process_page(self, page: Page) -> list[Chunk]:
         blocks = self._segmenter.segment(page)
+        logger.debug("Page %d segmented into %d blocks", page.page_no, len(blocks))
 
         page_chunks: list[Chunk] = []
         for block in blocks:

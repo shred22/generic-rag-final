@@ -221,6 +221,7 @@ __marimo__/
 
 # Generated data
 chroma_db/
+logs/
 
 # Environment variables
 .env
